@@ -64,7 +64,7 @@ See the video where I worked with the community to put together the initial impl
   * Boot the new install and use `rolling-rhino` to convert it to a rolling release.
 
 ```
-git clone https://github.com/wimpysworld/rolling-rhino.git
+git clone https://github.com/Delta18-Git/rolling-rhino.git
 cd rolling-rhino
 ./rolling-rhino
 ```
