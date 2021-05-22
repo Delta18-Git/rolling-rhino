@@ -10,7 +10,7 @@ Convert Ubuntu into a *"rolling release"* that tracks the `devel` series; **for 
 
 <p align="center"><b>Simple shell script to make Ubuntu track the `devel` series.</b></p>
 <!-- <div align="center"><img src=".github/screenshot.png" alt="Rolling Rhino Screenshot" /></div> -->
-<p align="center">Made with 💝 for <img src="https://assets.ubuntu.com/v1/cb22ba5d-favicon-16x16.png" align="top" width="24" /></p>
+<p align="center">Made with 💝 for <img src=".github/ubuntu.png" align="top" width="18" /></p>
 
 ## Introduction
 
@@ -22,6 +22,8 @@ Rolling Rhino is intended for Ubuntu developers and experienced Ubuntu users
 who want to install Ubuntu once and the track all development updates with
 automatic tracking of subsequent series.
 
+We have a Discord for this project: [![Discord](https://img.shields.io/discord/712850672223125565?color=0C306A&label=WimpysWorld%20Discord&logo=Discord&logoColor=ffffff&style=flat-square)](https://discord.gg/DrQgYMf)
+
 ## Caveats
 
 If you use Rolling Rhino to opt-in to `devel` series you're assuming support
@@ -29,6 +31,10 @@ of your system, including taking care of PPA migrations, cleaning
 obsolete/orphaned packages and **actively participating in any issue resolution
 for problems you may encounter** via [Launchpad](https://launchpad.net) using
 tools such as `apport` and `ubuntu-bug`.
+
+You will see `W: Conflicting distribution:` warnings from `apt` as its
+configuration will now reference the `devel` series which is a pointer to the
+current in-development series. But they are just that, warnings.
 
 ### Origins of Rolling Rhino
 
@@ -66,7 +72,7 @@ See the video where I worked with the community to put together the initial impl
 ```
 git clone https://github.com/Delta18-Git/rolling-rhino.git
 cd rolling-rhino
-./rolling-rhino
+sudo ./rolling-rhino
 ```
 
 Which will output something like this:
@@ -77,9 +83,9 @@ Rolling Rhino 🦏
   [+] INFO: Ubuntu detected.
   [+] INFO: Ubuntu 20.04 LTS detected.
   [+] INFO: Detected ubuntu-desktop.
-  [+] INFO: No PPAs detected, this is good."
+  [+] INFO: No PPAs detected, this is good.
   [+] INFO: All checks passed.
-Are you sure want to start tracking the devel series? [Y/N]
+Are you sure want to start tracking the devel series? [y/N]
 ```
 
 ## Credits

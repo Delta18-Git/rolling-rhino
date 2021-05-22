@@ -44,6 +44,7 @@ function fancy_message() {
 }
 
 echo "Rolling Rhino 🦏"
+<<<<<<< HEAD
       info) echo -e "  [${GREEN}+${RESET}] INFO: ${MESSAGE}";; # Previously "0"
       warn) echo -e "  [${YELLOW}*${RESET}] WARNING: ${MESSAGE}";; # Previously "1"
       error) echo -e "  [${RED}!${RESET}] ERROR: ${MESSAGE}";; # Previously "2"
@@ -52,6 +53,8 @@ if [ "$(id -u)" -ne 0 ]; then
   fancy_message error "You need to be root."
   exit 1
 fi
+=======
+>>>>>>> upstream/master
 
 # Take command line arguments
 while [ $# -gt 0 ]; do
@@ -66,10 +69,24 @@ while [ $# -gt 0 ]; do
   esac
 done
 
+# Check if the user running the script is root
+if [ "$(id -u)" -ne 0 ]; then
+  fancy_message error "You need to be root."
+  exit 1
+fi
+
 if which lsb_release 1>/dev/null; then
   fancy_message info "lsb_release detected."
 else
   fancy_message error "lsb_release not detected. Quitting."
+<<<<<<< HEAD
+=======
+  exit 1
+fi
+
+if grep -q devel /etc/apt/sources.list; then
+  fancy_message error "Already tracking the devel series. Nothing to do."
+>>>>>>> upstream/master
   exit 1
 fi
 
@@ -104,10 +121,15 @@ else
 fi
 
 DESKTOP_FOUND=0
-for META in kubuntu-desktop lubuntu-desktop ubuntu-desktop ubuntu-budgie-desktop ubuntukylin-desktop ubuntu-mate-desktop ubuntustudio-desktop xubuntu-desktop; do
-  INSTALLED=$(apt list --installed "${META}" 2>/dev/null | grep installed)
+for META in kubuntu-desktop lubuntu-desktop ubuntu-desktop ubuntu-budgie-desktop ubuntukylin-desktop ubuntu-mate-desktop ubuntustudio-desktop xubuntu-desktop ubuntu-wsl; do
+  INSTALLED=$(env LANG=C apt list --installed "${META}" 2>/dev/null | grep installed)
+
   if [ -n "${INSTALLED}" ]; then
+<<<<<<< HEAD
       fancy_message info "Detected ${META}."
+=======
+    fancy_message info "Detected ${META}."
+>>>>>>> upstream/master
     DESKTOP_FOUND=1
     break
   fi
@@ -122,50 +144,72 @@ UPDATE_PPAS=0
 if [ -z "$(ls -A /etc/apt/sources.list.d/*.list 2>/dev/null)" ]; then
   fancy_message info "No PPAs detected, this is good."
 else
+<<<<<<< HEAD
   fancy_message warn "PPAs detected, the script will update launchpad PPAs to track the devel series."
   UPDATE_PPAS=1
 fi
 
 fancy_message info "All checks passed."
 read -p "Are you sure you want to start tracking the devel series? [Y/N]" -n 1 -r
+=======
+  fancy_message warn "PPAs detected, you're responsible for taking care of PPA migrations in the future."
+  read -p "Do you want to disable the PPAs? [y/N]" -n 1 -r
+  if [[ ${REPLY} =~ ^[Yy]$ ]]; then
+    find /etc/apt/sources.list.d -type f -name "*.list" -print0 | \
+      while read -d $'\0' file; do sed -i 's/^\([^#].*\)/# \1/g' "$file"; done
+  fi
+fi
+
+fancy_message info "All checks passed."
+read -p "Are you sure you want to start tracking the devel series? [y/N]" -n 1 -r
+
+>>>>>>> upstream/master
 if [[ ${REPLY} =~ ^[Yy]$ ]]; then
+    HOST_ARCH="$(uname --machine)"
+    if [ "${HOST_ARCH}" == "x86_64" ]; then
+      ARCHIVE="http://archive.ubuntu.com/ubuntu"
+      SEC_ARCHIVE="http://security.ubuntu.com/ubuntu"
+    else
+      ARCHIVE="http://ports.ubuntu.com/ubuntu-ports"
+      SEC_ARCHIVE="http://ports.ubuntu.com/ubuntu-ports"
+    fi
     cp  /etc/apt/sources.list /etc/apt/sources.list.${OS_CODENAME}
     cat << EOF > /etc/apt/sources.list
 # See http://help.ubuntu.com/community/UpgradeNotes for how to upgrade to
 # newer versions of the distribution.
-deb http://archive.ubuntu.com/ubuntu devel main restricted
-# deb-src http://archive.ubuntu.com/ubuntu devel main restricted
+deb ${ARCHIVE} devel main restricted
+# deb-src ${ARCHIVE} devel main restricted
 
 ## Major bug fix updates produced after the final release of the
 ## distribution.
-deb http://archive.ubuntu.com/ubuntu devel-updates main restricted
-# deb-src http://archive.ubuntu.com/ubuntu devel-updates main restricted
+deb ${ARCHIVE} devel-updates main restricted
+# deb-src ${ARCHIVE} devel-updates main restricted
 
 ## N.B. software from this repository is ENTIRELY UNSUPPORTED by the Ubuntu
 ## team. Also, please note that software in universe WILL NOT receive any
 ## review or updates from the Ubuntu security team.
-deb http://archive.ubuntu.com/ubuntu devel universe
-# deb-src http://archive.ubuntu.com/ubuntu devel universe
-deb http://archive.ubuntu.com/ubuntu devel-updates universe
-# deb-src http://archive.ubuntu.com/ubuntu devel-updates universe
+deb ${ARCHIVE} devel universe
+# deb-src ${ARCHIVE} devel universe
+deb ${ARCHIVE} devel-updates universe
+# deb-src ${ARCHIVE} devel-updates universe
 
 ## N.B. software from this repository is ENTIRELY UNSUPPORTED by the Ubuntu
 ## team, and may not be under a free licence. Please satisfy yourself as to
 ## your rights to use the software. Also, please note that software in
 ## multiverse WILL NOT receive any review or updates from the Ubuntu
 ## security team.
-deb http://archive.ubuntu.com/ubuntu devel multiverse
-# deb-src http://archive.ubuntu.com/ubuntu devel multiverse
-deb http://archive.ubuntu.com/ubuntu devel-updates multiverse
-# deb-src http://archive.ubuntu.com/ubuntu devel-updates multiverse
+deb ${ARCHIVE} devel multiverse
+# deb-src ${ARCHIVE} devel multiverse
+deb ${ARCHIVE} devel-updates multiverse
+# deb-src ${ARCHIVE} devel-updates multiverse
 
 ## N.B. software from this repository may not have been tested as
 ## extensively as that contained in the main release, although it includes
 ## newer versions of some applications which may provide useful features.
 ## Also, please note that software in backports WILL NOT receive any review
 ## or updates from the Ubuntu security team.
-deb http://archive.ubuntu.com/ubuntu devel-backports main restricted universe multiverse
-# deb-src http://archive.ubuntu.com/ubuntu devel-backports main restricted universe multiverse
+deb ${ARCHIVE} devel-backports main restricted universe multiverse
+# deb-src ${ARCHIVE} devel-backports main restricted universe multiverse
 
 ## Uncomment the following two lines to add software from Canonical's
 ## 'partner' repository.
@@ -174,25 +218,34 @@ deb http://archive.ubuntu.com/ubuntu devel-backports main restricted universe mu
 # deb http://archive.canonical.com/ubuntu devel partner
 # deb-src http://archive.canonical.com/ubuntu devel partner
 
-deb http://security.ubuntu.com/ubuntu devel-security main restricted
-# deb-src http://security.ubuntu.com/ubuntu devel-security main restricted
-deb http://security.ubuntu.com/ubuntu devel-security universe
-# deb-src http://security.ubuntu.com/ubuntu devel-security universe
-deb http://security.ubuntu.com/ubuntu devel-security multiverse
-# deb-src http://security.ubuntu.com/ubuntu devel-security multiverse
+deb ${SEC_ARCHIVE} devel-security main restricted
+# deb-src ${SEC_ARCHIVE} devel-security main restricted
+deb ${SEC_ARCHIVE} devel-security universe
+# deb-src ${SEC_ARCHIVE} devel-security universe
+deb ${SEC_ARCHIVE} devel-security multiverse
+# deb-src ${SEC_ARCHIVE} devel-security multiverse
 EOF
 
     fancy_message info "Switching to devel series."
+<<<<<<< HEAD
     
     if [ ${UPDATE_PPAS} -eq 1 ]; then
 	update_ppas
     fi
     
+=======
+>>>>>>> upstream/master
     apt -y autoclean
     apt -y clean
     apt -y update
     apt -y dist-upgrade
     apt -y autoremove
     fancy_message info "Your Rolling Rhino is ready."
+<<<<<<< HEAD
     cat "$(dirname "$0")/logo.txt"
 fi  
+=======
+
+    cat "$(dirname "$0")/logo.txt"
+fi
+>>>>>>> upstream/master
